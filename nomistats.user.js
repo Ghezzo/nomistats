@@ -126,7 +126,7 @@ async function main() {
     }).join('')}
     `;
     statsPanel.innerHTML = `
-    <h2 class='title'>WIP - May be broken</h2>
+    <h2 class='title'>WIP - PRobably broken</h2>
     <h3 class='title'>Today - ${usageCounts.date.split('T')[0]}</h3>
     ${output}
     <h3 class="title">Total (Since Install)</h3>
