@@ -35,7 +35,7 @@ var statsPanel = document.createElement('div');
 statsPanel.style.position = 'fixed';
 statsPanel.style.top = '35px'; // 90
 statsPanel.style.left = '160px'; // 10
-statsPanel.style.display = 'block';
+statsPanel.style.display = 'none';
 statsPanel.id = 'statsPanel'; 
 
 var statsButton = document.createElement('button');
@@ -72,7 +72,7 @@ async function main() {
     const url = "https://beta.nomi.ai/api/me/daily-usage-counts";
     const data = await getJSON(url);
     //const innerObjects = Object.values(data.dailyUsageCounts);
-    const innerObjects = data.dailyUsageCounts.chatUserMessages;
+    //const innerObjects = data.dailyUsageCounts.chatUserMessages;
     const usageCounts = data.dailyUsageCounts;
     const keyMap = {
     'chatUserMessages': 'User Messages',
@@ -114,10 +114,10 @@ async function main() {
         }
         return `
             <div class="statsItem">
-            <div class="stats">
-                <div>${keyMap[key]}</div>
-                <div>${value}</div>
-            </div>
+                <div class="stats">
+                    <div>${keyMap[key]}</div>
+                    <div>${value}</div>
+                </div>
             </div>
         `;
         } else {
@@ -125,7 +125,30 @@ async function main() {
         }
     }).join('')}
     `;
-    statsPanel.innerHTML = "<h3 class='title'>Today</h3>" + output;
+    statsPanel.innerHTML = `
+    <h2 class='title'>WIP - May be broken</h2>
+    <h3 class='title'>Today - ${usageCounts.date.split('T')[0]}</h3>
+    ${output}
+    <h3 class="title">Total (Since Install)</h3>
+    <div class="statsItem">
+        <div class="stats">
+            <div>User Messages</div>
+            <div>${GM_getValue('totalChatUserMessages')}</div>
+        </div>
+    </div>
+    <div class="statsItem">
+        <div class="stats">
+            <div>Selfie Requests</div>
+            <div>${GM_getValue('totalSelfieRequests')}</div>
+        </div>
+    </div>
+    <div class="statsItem">
+        <div class="stats">
+            <div>Video Requests</div>
+            <div>${GM_getValue('totalVideoRequestsUsage')}</div>
+        </div>
+    </div>
+    `;
     /* statsPanel.innerHTML = `
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
         <div>User Messages</div>
@@ -135,7 +158,31 @@ async function main() {
     </div>
     ${output}
     `; */
-}
+    const currentChatValue = GM_getValue('totalChatUserMessages', 0);
+    const newChatValue = data.dailyUsageCounts.chatUserMessages;
+    if (newChatValue < currentChatValue) {
+        // do nothing
+    } else {
+        GM_setValue('totalChatUserMessages', newChatValue);
+    }
 
+    const currentTotalSelfieValue = GM_getValue('totalTotalSelfieRequests', 0);
+    const newTotalSelfieValue = data.dailyUsageCounts.totalSelfieRequests;
+    if (newTotalSelfieValue < currentTotalSelfieValue) {
+        // do nothing
+    } else {
+        GM_setValue('totalSelfieRequests', newTotalSelfieValue);
+    }
+    
+    const currentVideoRequestsValue = GM_getValue('totalVideoRequestsUsage', 0);
+    const newVideoRequestsValue = data.dailyUsageCounts.videoRequestsUsage;
+    if (newVideoRequestsValue < currentVideoRequestsValue) {
+        // do nothing
+    } else {
+        GM_setValue('totalVideoRequestsUsage', newVideoRequestsValue);
+    }
+
+
+}
 main();
 setInterval(main, 10000);
