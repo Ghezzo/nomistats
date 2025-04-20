@@ -29,7 +29,7 @@ function addGlobalStyle(css) {
     head.appendChild(style);
 }
 
-addGlobalStyle('#statsButton{background-color:#9610ff;cursor:pointer;color:#fff;border-radius:0px 0px 5px 5px;border:none;z-index:9999;padding:5px;width:50px}#statsButton:hover{background-color:#ac43ff}#statsButton:hover .cogIcon{animation:rotate 2s linear infinite}#saveSettingsButton,#settingsButton{background-color:#9610ff;transition:background-color .2s ease-out;padding:10px;cursor:pointer;color:#fff}#settingsButton{border-radius:5px;border:none;z-index:9999}#saveSettingsButton:hover,#settingsButton:hover{background-color:#a12aff !important}#settingsButton:hover .cogIcon{animation:rotate 2s linear infinite}@keyframes rotate{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}#statsPanel{min-width:300px;min-height:100px;max-width:400px;background:#181a20;border:1px solid #44495a;border-radius:5px;color:white;padding:10px;box-shadow:0 0 20px -7px #9610ff}#saveSettingsButton{border-radius:5px;border:none;margin-top:10px}.textbox{background-color:#2b2f3a;transition:background-color .2s ease-out;color:#fff;border:1px solid black;border-radius:5px;padding:5px;width:100%}.textbox:focus{background-color:#363b49;outline:none;border:1px solid #ccc}.textbox:hover{background-color:#363b49;outline:none;border:1px solid #ccc}.changelogLink{color:#9610ff;text-decoration:none;transition:color .2s ease-out}.changelogLink:hover{color:#a12aff !important}.hr{border:0;height:1px;min-width:300px;background:#333;background-image:linear-gradient(to right, #ccc, #333, #ccc)}.cb{accent-color:#9610ff;width:16px;height:16px;margin-bottom:-3px}.info{font-size:13px}');
+addGlobalStyle('#statsButton{background-color:#9610ff;cursor:pointer;color:#fff;border-radius:0px 0px 5px 5px;border:none;z-index:9999;padding:5px;width:50px}#statsButton:hover{background-color:#ac43ff}#statsButton:hover .cogIcon{animation:rotate 2s linear infinite}@keyframes rotate{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}#statsPanel{min-width:300px;min-height:100px;max-width:400px;background:#181a20;border:1px solid #44495a;border-radius:5px;color:white;box-shadow:0 0 20px -7px #9610ff}.statsItem:nth-child(even){background-color:#000000}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.statsItem{padding:5px;border:1px solid #44495a}.statsItem:last-child{border-bottom:none}.title{margin-left:20px}');
 
 var statsPanel = document.createElement('div');
 statsPanel.style.position = 'fixed';
@@ -66,32 +66,75 @@ function getJSON(url) {
         .then(response => response.json());
 }
 
+//addGlobalStyle(".statsItem:nth-child(even) {background-color: #000000;}");
+
 async function main() {
     const url = "https://beta.nomi.ai/api/me/daily-usage-counts";
     const data = await getJSON(url);
     //const innerObjects = Object.values(data.dailyUsageCounts);
     const innerObjects = data.dailyUsageCounts.chatUserMessages;
     const usageCounts = data.dailyUsageCounts;
+    const keyMap = {
+    'chatUserMessages': 'User Messages',
+    'chatNomiMessages': 'Nomi Messages',
+    'chatUserSpeechMessages': 'User Speech Messages',
+    'chatNomiSpeechMessages': 'Nomi Speech Messages',
+    'chatTtsRequests': 'TTS Requests',
+    'groupChatUserMessages': 'Group User Messages',
+    'groupChatNomiMessages': 'Group Nomi Messages',
+    'groupChatUserSpeechMessages': 'Group User Speech Messages',
+    'groupChatNomiSpeechMessages': 'Group Nomi Speech Messages',
+    'groupChatTtsRequests': 'Group TTS Requests',
+    'photoSelfieRequests': 'Selfie Requests',
+    'artSelfieRequests': 'Art Requests',
+    'groupChatArtSelfieRequests': 'Group Art Requests',
+    'groupChatPhotoSelfieRequests': 'Group Selfie Requests',
+    'videoRequestUsages': 'Video Requests',
+    'date': 'Date',
+    'totalSelfieRequests': 'Total Selfie Requests',
+    // add more mappings as needed
+    };
+
+    /* const output = `
+    ${Object.keys(usageCounts).map(key => `
+        <div style="margin-bottom: 10px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>${keyMap[key] || key}</div>
+            <div>${usageCounts[key]}</div>
+        </div>
+        </div>
+    `).join('')}
+    `; */
     const output = `
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-        ${Object.keys(usageCounts).map(key => `
-        <div>${key}</div>
-        <div>${usageCounts[key]}</div>
-        `).join('')}
-    </div>
+    ${Object.keys(usageCounts).map(key => {
+        if (keyMap[key]) {
+        let value = usageCounts[key];
+        if (typeof value === 'string' && value.includes('T')) {
+            value = value.split('T')[0];
+        }
+        return `
+            <div class="statsItem">
+            <div class="stats">
+                <div>${keyMap[key]}</div>
+                <div>${value}</div>
+            </div>
+            </div>
+        `;
+        } else {
+        return '';
+        }
+    }).join('')}
     `;
-    statsPanel.innerHTML = `
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+    statsPanel.innerHTML = "<h3 class='title'>Today</h3>" + output;
+    /* statsPanel.innerHTML = `
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
         <div>User Messages</div>
         <div>${data.dailyUsageCounts.chatUserMessages}</div>
+        <div>Nomi Messages</div>
+        <div>${data.dailyUsageCounts.chatNomiMessages}</div>
     </div>
     ${output}
-    `;
-    //statsPanel.innerHTML = `${JSON.stringify(data.dailyUsageCounts)}`;
-    //console.log(innerObjects); // Log the inner objects
-    //console.log(data); // Log the entire data object
-    /* const dailyMessageCount = data.dailyusagecounts.dailymessagecount;
-    console.log(dailyMessageCount); */
+    `; */
 }
 
 main();
