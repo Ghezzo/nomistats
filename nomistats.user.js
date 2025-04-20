@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Nomi Stats
 // @namespace    https://gzo.sh
-// @version      0.1.1
+// @version      0.1.2
 // @description  Some Nomi stats
 // @author       Ghezzo
 // @match        https://beta.nomi.ai/nomis*
@@ -29,7 +29,7 @@ function addGlobalStyle(css) {
     head.appendChild(style);
 }
 
-addGlobalStyle('#statsButton{background-color:#9610ff;cursor:pointer;color:#fff;border-radius:0px 0px 5px 5px;border:none;z-index:9999;padding:5px;width:50px}#statsButton:hover{background-color:#ac43ff}#statsButton:hover .cogIcon{animation:rotate 2s linear infinite}@keyframes rotate{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}#statsPanel{min-width:300px;min-height:100px;max-width:400px;background:#181a20;border:1px solid #44495a;border-radius:5px;color:white;box-shadow:0 0 20px -7px #9610ff}.statsItem:nth-child(even){background-color:#000000}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.statsItem{padding:5px;border:1px solid #44495a}.statsItem:last-child{border-bottom:none}.title{margin-left:20px}');
+addGlobalStyle('#statsButton{background-color:#9610ff;cursor:pointer;color:#fff;border-radius:0px 0px 5px 5px;border:none;z-index:9999;padding:5px;width:50px}#statsButton:hover{background-color:#ac43ff}#statsButton:hover .cogIcon{animation:rotate 2s linear infinite}@keyframes rotate{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}#statsPanel{min-width:300px;min-height:100px;max-width:400px;background:#181a20;border:1px solid #44495a;border-radius:5px;color:white;box-shadow:0 0 20px -7px #9610ff}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.statsItem{padding:5px;border-bottom:1px solid #44495a;background-color:#111317}.statsItem:nth-child(even){background-color:#0d0e11}.statsItem:last-child{border-bottom:none}.statsItem:first-of-type{border-top:1px solid #44495a}.title{margin-left:20px}');
 
 var statsPanel = document.createElement('div');
 statsPanel.style.position = 'fixed';
@@ -126,11 +126,11 @@ async function main() {
     }).join('')}
     `;
     statsPanel.innerHTML = `
-    <h2 class='title'>WIP - PRobably broken</h2>
+    <h2 class='title'>WIP - Probably broken</h2>
     <h3 class='title'>Today - ${usageCounts.date.split('T')[0]}</h3>
     ${output}
     <h3 class="title">Total (Since Install)</h3>
-    <div class="statsItem">
+    <div class="statsItem" style="border-top: 1px solid #44495a;">
         <div class="stats">
             <div>User Messages</div>
             <div>${GM_getValue('totalChatUserMessages')}</div>
