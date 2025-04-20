@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Nomi Stats
 // @namespace    https://gzo.sh
-// @version      0.1
+// @version      0.1.1
 // @description  Some Nomi stats
 // @author       Ghezzo
 // @match        https://beta.nomi.ai/nomis*
